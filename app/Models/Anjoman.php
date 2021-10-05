@@ -9,7 +9,7 @@ class Anjoman extends Model
 {
     use HasFactory;
 
-    protected $table = 'anjoman';
+    protected $table = 'anjomans';
     protected $fillable = [
         'name', 'person_price', 'hamrahan_price', 'total_people', 'used_people'
     ];

@@ -17,60 +17,118 @@ class RegisterController extends Controller
   {
     $anjomans = Anjoman::query()->get();
     $foods = Fee::query()->where('type', '=', Fee::TYPE_FOOD)->get();
-    $tandis = Fee::query()->where('type', '=',Fee::TYPE_GIFT)->where('product','=','تندیس')->get();
+    $tandis = Fee::query()->where('type', '=', Fee::TYPE_GIFT)->where('product', '=', 'تندیس')->get();
     return view('welcome', compact(['anjomans', 'foods', 'tandis']));
   }
 
   public function prepareData(Request $data)
   {
+
+    // dd($data->all());
     $data->validate([
       'name' => 'required|string|min:3',
       'family' => 'required|string|min:3',
       'mobile' => 'required|string|min:10|max:11',
-      // 'stdID' => 'required|unique:students,stdID|digits:7',
-      // 'anjoman' => 'required|exsits:anjoman,id'
+      'stdID' => 'required|unique:students,stdID|digits:7',
+      'anjoman' => 'required|exists:anjomans,id',
+      'hamrahan' => 'required|digits_between:0,14',
+      'launch' => 'required|digits_between:0,15',
+      'dinner' => 'required|digits_between:0,15'
     ]);
+
+    return $this->calculateBill($data);
+  }
+
+
+  public function calculateBill(Request $request)
+  {
+    $anjoman = Anjoman::query()->findOrFail($request->anjoman);
+
+    $hamrahanFee = (int)($anjoman->hamrahan_price);
+    $foodFee = (int)(Fee::query()->findOrFail(1)->amount);
+
+    $col = collect([
+      'person_price' => (int)$anjoman->person_price,
+      'hamrah_price' => $hamrahanFee * $request->hamrahan, // mohasebe nerkh hamrahan
+      'launch_price' => $foodFee * $request->launch, // mohasebe food
+      'dinner_price' => $foodFee * $request->dinner // mohasebe food
+    ]);
+
+    if ($request->exists('tandis')) {
+      $tandisFee = Fee::query()
+        ->where('type', '=', Fee::TYPE_GIFT)
+        ->where('product', '=', 'تندیس')
+        ->get()
+        ->first(function ($value, $key) {
+          return $value;
+        });
+      $col->put('tandis_price', (int)$tandisFee->amount); // price of tandis
+    }
+
+    $bill = $col->sum();
+    $col->put('bill', $bill);
 
     $orderID = random_int(100, 9999);
 
-    $request = Toman::orderId($orderID)
-      ->amount(env('Amount'))
-      ->description('جشن فارغ التحصیلی ۱۴۰۰')
-      ->name($data->name . $data->family)
-      ->callback(route('confirm'))
-      ->mobile($data->mobile)
-      // ->email($data->email)
-      ->request();
+    $newPay = Payment::create([
+      'name' => $request->name,
+      'family' => $request->family,
+      'stdID' => $request->stdID,
+      'mobile' => $request->mobile,
+      'email' => $request->email,
+      'order_id' => $orderID,
+      'bill' => $col->get('bill'),
+      'anjoman_id' => (int)$request->anjoman,
+      'hamrahan' => $request->hamrahan,
+      'tandis' => $request->exists('tandis'),
+      'launchs' => $request->launch,
+      'dinners' => $request->dinner
+    ]);
 
-    if ($request->successful()) {
-      // Store created transaction details for verification
-      $transactionId = $request->transactionId();
-      $transactionURL = $request->paymentUrl();
-
-      // $newPay = Payment::create([
-      //   'name' => $data->name,
-      //   'family' => $data->family,
-      //   'stdID' => $data->stdID,
-      //   'mobile' => $data->mobile,
-      //   'email' => $data->email,
-      //   'order_id' => $orderID,
-      //   'link' => $transactionURL,
-      //   'transaction_id' => $transactionId
-      // ]);
-
-      // dd($request);
-      // Log::info('TRANSACTION = '.$request->paymentUrl());
-
-      // Redirect to payment URL
-      return $request->pay();
-    }
-
-    if ($request->failed()) {
-      // Handle transaction request failure.
-      dd($request);
-    }
+    return view('confirm', compact('newPay', 'col'));
   }
 
+  private function beforePayment()
+  {
+
+    // $newPay = Payment::create([
+    //   'name' => $request->name,
+    //   'family' => $request->family,
+    //   'stdID' => $request->stdID,
+    //   'mobile' => $request->mobile,
+    //   'email' => $request->email,
+    //   'order_id' => $orderID,
+    //   'link' => $transactionURL,
+    //   'transaction_id' => $transactionId
+    // ]);
+    // // $request = Toman::orderId($orderID)
+    // //   ->amount(env('Amount'))
+    // //   ->description('جشن فارغ التحصیلی ۱۴۰۰')
+    // //   ->name($data->name . $data->family)
+    // //   ->callback(route('confirm'))
+    // //   ->mobile($data->mobile)
+    // //   // ->email($data->email)
+    // //   ->request();
+
+    // // if ($request->successful()) {
+    // //   // Store created transaction details for verification
+    // //   $transactionId = $request->transactionId();
+    // //   $transactionURL = $request->paymentUrl();
+
+
+
+    // //   // dd($request);
+    // //   // Log::info('TRANSACTION = '.$request->paymentUrl());
+
+    // //   // Redirect to payment URL
+    // //   return $request->pay();
+    // }
+
+    // if ($request->failed()) {
+    //   // Handle transaction request failure.
+    //   dd($request);
+    // }
+  }
   public function confirmPayment(CallbackRequest $request)
   {
     $payment = $request->verify();
@@ -101,11 +159,10 @@ class RegisterController extends Controller
     }
   }
 
-  // public function test()
-  // {
-  //   Anjoman::create([
-  //     'name' => ,
-  //      'person_price' => , 'hamrahan_price' => , 'total_people' => , 'used_people' => 
-  //   ]);
-  // }
+  public function test()
+  {
+    // Fee::create([
+    //   'product' => 'ناهار - جوجه کباب', 'type' => Fee::TYPE_FOOD, 'unit' => 'پرس', 'amount' => '35000'
+    // ]);
+  }
 }

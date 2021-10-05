@@ -11,7 +11,12 @@ class Payment extends Model
 
     protected $table = 'payments';
     protected $fillable = [
-        'order_id', 'bill', 'link', 'transaction_id', 'reference_id', 'status_code',
-        'name', 'family', 'stdID', 'mobile', 'email'
+        'anjoman_id', 'is_paid', 'person_confirmed', 'order_id', 'bill', 'link', 'transaction_id', 'reference_id', 'status_code',
+        'name', 'family', 'stdID', 'mobile',  'hamrahan', 'tandis', 'launchs', 'dinners'
     ];
+
+    public function anjoman()
+    {
+        return $this->belongsTo(Anjoman::class, 'anjoman_id', 'id');
+    }
 }

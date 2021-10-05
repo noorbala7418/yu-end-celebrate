@@ -80,6 +80,7 @@
             @endif
         </div>
         <div class="row">
+            <!-- Information Section -->
             <div class="col-md-4 py-5 bg-primary text-white text-center ">
                 <div class=" ">
                     <div class="card-body">
@@ -120,75 +121,14 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group col-md-3" dir="rtl" style="text-align: right; padding-top:6px">
-                            <label for="anjoman"> انجمن علمی: </label>
+               
+                    {{-- <div class="form-row">
+                        <div class="form-group col-md-3"></div>
+                        <div class="form-group" style="margin: 0 auto;">
+                            <h4>مبلغ ثبت‌نام: {{ env('Amount') }} تومان</h4>
                         </div>
-                        <div class="form-group col-md-9">
-                            <select name="anjoman" class="form-control" required>
-                                <option value="" selected>انتخاب کنید</option>
-                                @foreach ($anjomans as $anjoman)
-                                    <option value="{{ $anjoman->id }}">{{ $anjoman->name }} - ظرفیت باقی مانده:
-                                        {{ $anjoman->total_people - $anjoman->used_people }}</option>
-                                @endforeach
-                            </select>
-
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
-                            <label for="anjoman">تعداد همراهان (توجه: حداکثر تعداد همراهان ۱۴ نفر می‌باشد.)</label>
-                        </div>
-                        <div class="form-group col-md-4" dir="ltr">
-                            <input id="hamrahan" name="hamrahan" placeholder="تعداد همراهان" class="form-control"
-                                required type="number" max="14" min="0" value="0">
-
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-12" dir="rtl" style="text-align: right;">
-                            <p>غذاهای سرو شده:</p>
-                            <ul>
-                                @foreach ($foods as $food)
-                                    <li>{{ $food->product . ' - ' . $food->amount }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-
-
-                    <div class="form-row">
-                        <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
-                            <label for="launch">تعداد ناهار (توجه: حداکثر تعداد 15 پرس می‌باشد.)</label>
-                        </div>
-                        <div class="form-group col-md-4" dir="ltr">
-                            <input id="launch" name="launch" class="form-control" placeholder="تعداد ناهار رزرو"
-                                required type="number" max="15" min="0" value="0">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
-                            <label for="dinner">تعداد شام (توجه: حداکثر تعداد 15 پرس می‌باشد.)</label>
-                        </div>
-                        <div class="form-group col-md-4" dir="ltr">
-                            <input id="dinner" name="dinner" class="form-control" placeholder="تعداد شام رزرو"
-                                required type="number" max="15" min="0" value="0">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
-                            @foreach ($tandis as $item)
-                                <label for="anjoman">تندیس می‌خواهم (قیمت: {{ $item->amount }} تومان)</label>
-                            @endforeach
-                        </div>
-                        <div class="form-group col-md-4" dir="ltr">
-                            <input id="tandis" name="tandis" class="form-control" type="checkbox">
-                        </div>
-                    </div>
-
+                        <div class="form-group col-md-3"></div>
+                    </div> --}}
                     <div class="form-row">
                         <button type="submit" class="btn btn-success col-md-3" style="margin: 0 auto;">
                             مرحله بعد
