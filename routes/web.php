@@ -18,19 +18,29 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [
     RegisterController::class,
     'index'
-]);
+])->name('home');
 
 Route::post('/register', [
     RegisterController::class,
     'prepareData'
 ])->name('register');
 
+Route::post('/pay/{id}',[
+    RegisterController::class,
+    'payment'
+])->name('pay');
+
+
 Route::get('/confirm', [
     RegisterController::class,
     'confirmPayment'
 ])->name('confirm');
 
-Route::get('/test',[
-    RegisterController::class,
-    'test'
-]);
+// Route::get('/test',[
+//     RegisterController::class,
+//     'test'
+// ]);
+
+// Route::get('/test', function (){
+//     return view('confirm');
+// });

@@ -12,7 +12,9 @@ class Fee extends Model
 
     const TYPE_GIFT = 'gift';
     const TYPE_FOOD = 'food';
-    const TYPES = [self::TYPE_FOOD, self::TYPE_GIFT];
+    const TYPE_CODE = 'code';
+
+    const TYPES = [self::TYPE_FOOD, self::TYPE_GIFT, self::TYPE_CODE];
 
     protected $fillable = [
         'product', 'type', 'unit', 'amount'

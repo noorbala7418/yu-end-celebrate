@@ -24,7 +24,7 @@ class CreatePaymentsTable extends Migration
             $table->integer('status_code')->nullable();
             $table->string('link')->unique()->nullable();
             $table->string('bill');
-            $table->integer('stdID')->unique();
+            $table->integer('stdID');
             $table->string('name');
             $table->string('family');
             $table->string('mobile');

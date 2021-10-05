@@ -25,6 +25,7 @@ class CreateStudentsTable extends Migration
             $table->boolean('tandis')->default(false); // tandis
             $table->integer('launchs')->default(0);
             $table->integer('dinners')->default(0);
+            $table->string('bill');
             $table->timestamps();
 
             $table->foreign('anjoman_id')->references('id')->on('anjomans')->onDelete('cascade')->onUpdate('cascade');

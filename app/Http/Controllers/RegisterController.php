@@ -24,12 +24,18 @@ class RegisterController extends Controller
   public function prepareData(Request $data)
   {
 
-    // dd($data->all());
+    $code = Fee::query()->where('type', '=', Fee::TYPE_CODE)->get()->first();
+
+    if ($code->product != $data->regcode) {
+
+      return back()->withErrors(['msg' => 'کد ثبت‌نام درست نیست. بعدا تلاش کنید.']);
+    }
+
     $data->validate([
       'name' => 'required|string|min:3',
       'family' => 'required|string|min:3',
       'mobile' => 'required|string|min:10|max:11',
-      'stdID' => 'required|unique:students,stdID|digits:7',
+      'stdID' => 'required|unique:students,stdID|digits_between:7,8',
       'anjoman' => 'required|exists:anjomans,id',
       'hamrahan' => 'required|digits_between:0,14',
       'launch' => 'required|digits_between:0,15',
@@ -43,17 +49,6 @@ class RegisterController extends Controller
   public function calculateBill(Request $request)
   {
     $anjoman = Anjoman::query()->findOrFail($request->anjoman);
-
-    $hamrahanFee = (int)($anjoman->hamrahan_price);
-    $foodFee = (int)(Fee::query()->findOrFail(1)->amount);
-
-    $col = collect([
-      'person_price' => (int)$anjoman->person_price,
-      'hamrah_price' => $hamrahanFee * $request->hamrahan, // mohasebe nerkh hamrahan
-      'launch_price' => $foodFee * $request->launch, // mohasebe food
-      'dinner_price' => $foodFee * $request->dinner // mohasebe food
-    ]);
-
     if ($request->exists('tandis')) {
       $tandisFee = Fee::query()
         ->where('type', '=', Fee::TYPE_GIFT)
@@ -62,6 +57,18 @@ class RegisterController extends Controller
         ->first(function ($value, $key) {
           return $value;
         });
+    }
+    $hamrahanFee = (int)($anjoman->hamrahan_price);
+    $food = Fee::query()->where('type', '=', Fee::TYPE_FOOD)->get()->first();
+
+    $col = collect([
+      'person_price' => (int)$anjoman->person_price,
+      'hamrah_price' => $hamrahanFee * $request->hamrahan, // mohasebe nerkh hamrahan
+      'launch_price' => (int)$food->amount * $request->launch, // mohasebe food
+      'dinner_price' => (int)$food->amount * $request->dinner // mohasebe food
+    ]);
+
+    if ($request->exists('tandis')) {
       $col->put('tandis_price', (int)$tandisFee->amount); // price of tandis
     }
 
@@ -85,50 +92,54 @@ class RegisterController extends Controller
       'dinners' => $request->dinner
     ]);
 
-    return view('confirm', compact('newPay', 'col'));
+
+    if ($request->exists('tandis')) {
+      return view('confirm', compact('newPay', 'col', 'anjoman', 'tandisFee', 'food'));
+    } else {
+      return view('confirm', compact('newPay', 'col', 'anjoman', 'food'));
+    }
   }
 
-  private function beforePayment()
+  public function payment($id)
   {
+    $payment = Payment::query()->findOrFail($id);
 
-    // $newPay = Payment::create([
-    //   'name' => $request->name,
-    //   'family' => $request->family,
-    //   'stdID' => $request->stdID,
-    //   'mobile' => $request->mobile,
-    //   'email' => $request->email,
-    //   'order_id' => $orderID,
-    //   'link' => $transactionURL,
-    //   'transaction_id' => $transactionId
-    // ]);
-    // // $request = Toman::orderId($orderID)
-    // //   ->amount(env('Amount'))
-    // //   ->description('جشن فارغ التحصیلی ۱۴۰۰')
-    // //   ->name($data->name . $data->family)
-    // //   ->callback(route('confirm'))
-    // //   ->mobile($data->mobile)
-    // //   // ->email($data->email)
-    // //   ->request();
-
-    // // if ($request->successful()) {
-    // //   // Store created transaction details for verification
-    // //   $transactionId = $request->transactionId();
-    // //   $transactionURL = $request->paymentUrl();
+    $payment->update([
+      'person_confirmed' => true
+    ]);
 
 
+    // request to idpay for receiving info
+    $request = Toman::orderId($payment->order_id)
+      ->amount($payment->bill)
+      ->description(env('APP_NAME'))
+      ->name($payment->name . $payment->family)
+      ->callback(route('confirm'))
+      ->mobile($payment->mobile)
+      ->request();
 
-    // //   // dd($request);
-    // //   // Log::info('TRANSACTION = '.$request->paymentUrl());
+    if ($request->successful()) {
+      // Store created transaction details for verification
+      $transactionId = $request->transactionId();
+      $transactionURL = $request->paymentUrl();
 
-    // //   // Redirect to payment URL
-    // //   return $request->pay();
-    // }
+      $payment::query()->update([
+        'link' => $transactionURL,
+        'transaction_id' => $transactionId
+      ]);
 
-    // if ($request->failed()) {
-    //   // Handle transaction request failure.
-    //   dd($request);
-    // }
+      // Redirect to payment URL
+      return $request->pay();
+    }
+
+    if ($request->failed()) {
+      // Handle transaction request failure.
+      dd($request);
+      Log::error('ERROR IN PAYMENT FUNCTION = ', $request);
+    }
   }
+
+
   public function confirmPayment(CallbackRequest $request)
   {
     $payment = $request->verify();
@@ -138,12 +149,16 @@ class RegisterController extends Controller
 
       $referenceId = $payment->referenceId();
       $transactionId = $payment->transactionId();
+
       $confirmPayment = Payment::query()
         ->where('transaction_id', '=', $transactionId)
         ->update([
           'reference_id' => $referenceId,
-          'status_code' => $payment->status()
+          'status_code' => $payment->status(),
+          'is_paid' => true
         ]);
+        // TODO: create student from pay object
+        // create success page
 
       // dd('انجام شد', $transactionId, $payment, $payment->status());
     }
@@ -151,18 +166,37 @@ class RegisterController extends Controller
     if ($payment->alreadyVerified()) {
       // ...
       dd('انجام شده بود', $payment);
+
+      // implement already paid page
     }
 
     if ($payment->failed()) {
       dd('انجام نشد', $payment);
+      // implement failed page
+      // باید شماره ی فاکتور و شماره تراکنش و تاریخ را نمایش بدهیم
       // ...
     }
   }
 
-  public function test()
-  {
-    // Fee::create([
-    //   'product' => 'ناهار - جوجه کباب', 'type' => Fee::TYPE_FOOD, 'unit' => 'پرس', 'amount' => '35000'
-    // ]);
-  }
+  private function createStudent(Payment $payment){}
+
+
+  // public function test()
+  // {
+  //   Fee::create([
+  //     'product' => 'ناهار - جوجه کباب', 'type' => Fee::TYPE_FOOD, 'unit' => 'پرس', 'amount' => '35000'
+  //   ]);
+
+  //   Fee::create([
+  //     'product' => 'تندیس', 'type' => Fee::TYPE_GIFT, 'unit' => 'عدد', 'amount' => '50000'
+  //   ]);
+
+  //   Fee::create([
+  //     'product' => 'شام - جوجه کباب', 'type' => Fee::TYPE_FOOD, 'unit' => 'پرس', 'amount' => '35000'
+  //   ]);
+
+  //   Fee::create([
+  //     'product' => 'UNi1400YZD', 'type' => Fee::TYPE_CODE, 'unit' => 'عدد', 'amount' => '0'
+  //   ]);
+  // }
 }

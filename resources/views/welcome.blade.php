@@ -105,8 +105,8 @@
                             <input id="Full Name" name="family" placeholder="نام خانوادگی" class="form-control"
                                 type="text" required>
                         </div>
-
                     </div>
+
                     <div class="form-row">
                         <div class="form-group col-md-6" dir="ltr">
                             <input id="Mobile" name="mobile" placeholder="شماره موبایل" class="form-control" required
@@ -115,7 +115,7 @@
                         </div>
                         <div class="form-group col-md-6" dir="ltr">
                             <input id="stdID" name="stdID" placeholder="شماره دانشجویی" class="form-control" required
-                                type="text" size="7">
+                                type="text" max="8" min="7">
 
                         </div>
                     </div>
@@ -186,6 +186,18 @@
                         </div>
                         <div class="form-group col-md-4" dir="ltr">
                             <input id="tandis" name="tandis" class="form-control" type="checkbox">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        
+                        <div class="form-group col-md-8 text-right" dir="rtl">
+                            <label for="regcode" class="text-right">کد ثبت‌نام:</label>
+                            <p style="color: red">توجه: درصورتیکه کد ثبت‌نام را ندارید، سیستم به شما خطا خواهد داد. </p>
+                        </div>
+                        <div class="form-group col-md-4" dir="ltr">
+                            <input id="regcode" name="regcode" placeholder="کد ثبت‌نام" class="form-control" required
+                                type="text">
                         </div>
                     </div>
 

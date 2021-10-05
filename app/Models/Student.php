@@ -10,7 +10,7 @@ class Student extends Model
     use HasFactory;
     protected $table = 'students';
     protected $fillable = [
-        'anjoman_id', 'payment_id', 'stdID', 'name', 'family', 'mobile', 'hamrahan', 'tandis', 'launchs', 'dinners'
+        'anjoman_id', 'payment_id', 'stdID', 'name', 'family', 'mobile', 'hamrahan', 'tandis', 'launchs', 'dinners', 'bill'
     ];
 
     public function payment()
