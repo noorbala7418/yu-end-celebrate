@@ -63,6 +63,9 @@
             text-align: center;
         }
 
+        .clear {
+            clear: both;
+        }
     </style>
 </head>
 
@@ -210,6 +213,8 @@
             </div>
 
         </div>
+        <div class="clear"></div>
+        <br><br><br><br><br><br><br><br>
     </div>
     <footer class="bg-light text-center text-lg-start" id="footer">
         <!-- Copyright -->

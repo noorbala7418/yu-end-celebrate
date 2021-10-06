@@ -72,17 +72,6 @@
 
 <body>
     <div class="container " id="app">
-        {{-- <div class="row">
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-        </div> --}}
         <div class="row">
             <!-- Information Section -->
             <div class="col-md-4 py-5 bg-primary text-white text-center ">
@@ -162,7 +151,7 @@
                                 <label for="name">تعداد ناهار رزرو شده (هر پرس: {{ $food->amount }} تومان): </label>
                             </div>
                             <div class="form-group col-md-6 text-center">
-                                <p>{{ $newPay->launchs }} نفر</p>
+                                <p>{{ $newPay->launchs }} {{$food->unit}}</p>
                                 <p style="color: green">مجموعا: {{ $col->get('launch_price') }} تومان</p>
                             </div>
                         </div>
@@ -172,7 +161,7 @@
                                 <label for="name">تعداد شام رزرو شده (هر پرس: {{ $food->amount }} تومان): </label>
                             </div>
                             <div class="form-group col-md-6 text-center">
-                                <p>{{ $newPay->dinners }} نفر</p>
+                                <p>{{ $newPay->dinners }} {{$food->unit}}</p>
                                 <p style="color: green">مجموعا: {{ $col->get('dinner_price') }} تومان</p>
                             </div>
                         </div>
