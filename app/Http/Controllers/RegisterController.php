@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Anjoman;
 use App\Models\Fee;
 use App\Models\Payment;
+use App\Models\Student;
 use Evryn\LaravelToman\CallbackRequest;
 use Evryn\LaravelToman\Facades\Toman;
 use Illuminate\Http\Request;
@@ -27,8 +28,7 @@ class RegisterController extends Controller
     $code = Fee::query()->where('type', '=', Fee::TYPE_CODE)->get()->first();
 
     if ($code->product != $data->regcode) {
-
-      return back()->withErrors(['msg' => 'کد ثبت‌نام درست نیست. بعدا تلاش کنید.']);
+      return back()->withErrors(['msg' => 'کد ثبت‌نام درست نیست. دوباره تلاش کنید.']);
     }
 
     $data->validate([
@@ -41,6 +41,19 @@ class RegisterController extends Controller
       'launch' => 'required|digits_between:0,15',
       'dinner' => 'required|digits_between:0,15'
     ]);
+
+    $anjoman =  Anjoman::query()->findOrFail($data->anjoman);
+    $freePlace = $anjoman->total_people - $anjoman->used_people;
+    
+    if ($freePlace == 0) {
+      return back()->withErrors(['msg' => 'ظرفیت این رشته تکمیل شده است. لطفا دوباره تلاش نکنید.']);
+    }
+
+    if ($data->hamrahan + 1 > $freePlace) {
+      return back()->withErrors([
+        'msg' => "تعداد رزرو مورد نظر شما از مقدار باقی مانده بیشتر است. تعداد باقی مانده: ${freePlace}"
+      ]);
+    }
 
     return $this->calculateBill($data);
   }
@@ -59,7 +72,10 @@ class RegisterController extends Controller
         });
     }
     $hamrahanFee = (int)($anjoman->hamrahan_price);
-    $food = Fee::query()->where('type', '=', Fee::TYPE_FOOD)->get()->first();
+    $food = Fee::query()
+      ->where('type', '=', Fee::TYPE_FOOD)
+      ->get()
+      ->first();
 
     $col = collect([
       'person_price' => (int)$anjoman->person_price,
@@ -75,7 +91,7 @@ class RegisterController extends Controller
     $bill = $col->sum();
     $col->put('bill', $bill);
 
-    $orderID = random_int(100, 9999);
+    $orderID = random_int(100, 100000);
 
     $newPay = Payment::create([
       'name' => $request->name,
@@ -94,9 +110,9 @@ class RegisterController extends Controller
 
 
     if ($request->exists('tandis')) {
-      return view('confirm', compact('newPay', 'col', 'anjoman', 'tandisFee', 'food'));
+      return view('confirm', compact(['newPay', 'col', 'anjoman', 'tandisFee', 'food']));
     } else {
-      return view('confirm', compact('newPay', 'col', 'anjoman', 'food'));
+      return view('confirm', compact(['newPay', 'col', 'anjoman', 'food']));
     }
   }
 
@@ -123,10 +139,9 @@ class RegisterController extends Controller
       $transactionId = $request->transactionId();
       $transactionURL = $request->paymentUrl();
 
-      $payment::query()->update([
-        'link' => $transactionURL,
-        'transaction_id' => $transactionId
-      ]);
+      $payment->link = $transactionURL;
+      $payment->transaction_id = $transactionId;
+      $payment->save();
 
       // Redirect to payment URL
       return $request->pay();
@@ -134,7 +149,8 @@ class RegisterController extends Controller
 
     if ($request->failed()) {
       // Handle transaction request failure.
-      dd($request);
+      $failedPay = $payment->order_id;
+      return view('failed-payment', compact(['failedPay']));
       Log::error('ERROR IN PAYMENT FUNCTION = ', $request);
     }
   }
@@ -151,52 +167,60 @@ class RegisterController extends Controller
       $transactionId = $payment->transactionId();
 
       $confirmPayment = Payment::query()
-        ->where('transaction_id', '=', $transactionId)
-        ->update([
-          'reference_id' => $referenceId,
-          'status_code' => $payment->status(),
-          'is_paid' => true
-        ]);
-        // TODO: create student from pay object
-        // create success page
+        ->where('transaction_id', '=', $transactionId)->get()->first();
 
-      // dd('انجام شد', $transactionId, $payment, $payment->status());
+
+      $confirmPayment->reference_id = $referenceId;
+      $confirmPayment->status_code = $payment->status();
+      $confirmPayment->is_paid = true;
+      $confirmPayment->save();
+
+      $anjoman = Anjoman::query()->findOrFail($confirmPayment->anjoman_id);
+      $anjoman->update([
+        'used_people' => $anjoman->used_people + $confirmPayment->hamrahan + 1
+      ]);
+
+      // TODO: create student from pay object
+
+      $this->createStudent($confirmPayment);
+      return view('success-payment', compact(['referenceId']));
     }
 
     if ($payment->alreadyVerified()) {
-      // ...
-      dd('انجام شده بود', $payment);
+      $referenceId = $payment->referenceId();
 
-      // implement already paid page
+      return view('already-paid-payment', compact(['referenceId']));
     }
 
     if ($payment->failed()) {
-      dd('انجام نشد', $payment);
-      // implement failed page
-      // باید شماره ی فاکتور و شماره تراکنش و تاریخ را نمایش بدهیم
-      // ...
+      $failedPay = $payment->orderID();
+      return view('failed-payment', compact(['failedPay']));
     }
   }
 
-  private function createStudent(Payment $payment){}
+  private function createStudent(Payment $payment)
+  {
+    Student::query()->create([
+      'anjoman_id' => $payment->anjoman_id,
+      'payment_id' => $payment->id,
+      'stdID' => $payment->stdID,
+      'name' => $payment->name,
+      'family' => $payment->family,
+      'mobile' => $payment->mobile,
+      'hamrahan' => $payment->hamrahan,
+      'tandis' => $payment->tandis,
+      'launchs' => $payment->launchs,
+      'dinners' => $payment->dinners,
+      'bill' => $payment->bill
+    ]);
+  }
 
 
-  // public function test()
-  // {
-  //   Fee::create([
-  //     'product' => 'ناهار - جوجه کباب', 'type' => Fee::TYPE_FOOD, 'unit' => 'پرس', 'amount' => '35000'
-  //   ]);
+  public function test()
+  {
+    $anjomans = Anjoman::query()->get();
+    return $anjomans;
+  }
 
-  //   Fee::create([
-  //     'product' => 'تندیس', 'type' => Fee::TYPE_GIFT, 'unit' => 'عدد', 'amount' => '50000'
-  //   ]);
 
-  //   Fee::create([
-  //     'product' => 'شام - جوجه کباب', 'type' => Fee::TYPE_FOOD, 'unit' => 'پرس', 'amount' => '35000'
-  //   ]);
-
-  //   Fee::create([
-  //     'product' => 'UNi1400YZD', 'type' => Fee::TYPE_CODE, 'unit' => 'عدد', 'amount' => '0'
-  //   ]);
-  // }
 }
