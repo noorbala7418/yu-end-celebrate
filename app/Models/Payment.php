@@ -11,8 +11,8 @@ class Payment extends Model
 
     protected $table = 'payments';
     protected $fillable = [
-        'anjoman_id', 'is_paid', 'person_confirmed', 'order_id', 'bill', 'link', 'transaction_id', 'reference_id', 'status_code',
-        'name', 'family', 'stdID', 'mobile',  'hamrahan', 'tandis', 'launchs', 'dinners'
+        'anjoman_id', 'is_paid', 'person_confirmed', 'order_id', 'bill', 'transaction_id', 'reference_id', 'status_code',
+        'name', 'family', 'stdID', 'mobile',  'hamrahan', 'tandis', 'launchs', 'dinners', 'link'
     ];
 
     public function anjoman()
