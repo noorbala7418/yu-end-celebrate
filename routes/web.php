@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\RegisterController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,11 +35,8 @@ Route::get('/confirm', [
     'confirmPayment'
 ])->name('confirm');
 
-// Route::get('/test',[
-//     RegisterController::class,
-//     'test'
-// ]);
+Route::get('/report/{name}',[ // TODO: This is a messy! and to be clean in next version
+    RegisterController::class,
+    'getReport'
+]);
 
-// Route::get('/test', function (){
-//     return view('confirm');
-// });

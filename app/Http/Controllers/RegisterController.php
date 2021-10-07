@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StudentsExport;
 use App\Models\Anjoman;
 use App\Models\Fee;
 use App\Models\Payment;
@@ -10,6 +11,7 @@ use Evryn\LaravelToman\CallbackRequest;
 use Evryn\LaravelToman\Facades\Toman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RegisterController extends Controller
 {
@@ -44,7 +46,7 @@ class RegisterController extends Controller
 
     $anjoman =  Anjoman::query()->findOrFail($data->anjoman);
     $freePlace = $anjoman->total_people - $anjoman->used_people;
-    
+
     if ($freePlace == 0) {
       return back()->withErrors(['msg' => 'ظرفیت این رشته تکمیل شده است. لطفا دوباره تلاش نکنید.']);
     }
@@ -216,11 +218,11 @@ class RegisterController extends Controller
   }
 
 
-  public function test()
+  public function getReport($name)
   {
-    $anjomans = Anjoman::query()->get();
-    return $anjomans;
+    if ($name == "YazdUniGetReport1400") { // TODO: This is a messy! Should be clean in next version
+      return Excel::download(new StudentsExport, 'stds.xlsx');
+    }
+    return redirect('/');
   }
-
-
 }
