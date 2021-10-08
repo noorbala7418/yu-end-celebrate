@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ env('APP_NAME', 'Laravel') }}</title>
+    <title>{{ \Config::get('app.name'); }}</title>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vazir-font/30.1.0/font-face.css"
@@ -79,7 +79,7 @@
                     <div class="card-body">
                         <img src="https://yazd.ac.ir/UI/Styles/Default/images/logo.png" style="width:90%">
                         <br>
-                        <h2 class="py-3">{{ env('APP_NAME') }}</h2>
+                        <h2 class="py-3">{{ \Config::get('app.name'); }}</h2>
                         <br>
                         <p>
                             بیتوک | انجمن علمی مهندسی کامپیوتر</p>

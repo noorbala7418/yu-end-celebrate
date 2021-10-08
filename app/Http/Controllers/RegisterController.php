@@ -10,6 +10,7 @@ use App\Models\Student;
 use Evryn\LaravelToman\CallbackRequest;
 use Evryn\LaravelToman\Facades\Toman;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -130,7 +131,7 @@ class RegisterController extends Controller
     // request to idpay for receiving info
     $request = Toman::orderId($payment->order_id)
       ->amount($payment->bill)
-      ->description(env('APP_NAME'))
+      ->description(Config::get('app.name'))
       ->name($payment->name . $payment->family)
       ->callback(route('confirm'))
       ->mobile($payment->mobile)
