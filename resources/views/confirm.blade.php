@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ \Config::get('app.name'); }}</title>
+    <title>{{ \Config::get('app.name') }}</title>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vazir-font/30.1.0/font-face.css"
@@ -79,16 +79,15 @@
                     <div class="card-body">
                         <img src="https://yazd.ac.ir/UI/Styles/Default/images/logo.png" style="width:90%">
                         <br>
-                        <h2 class="py-3">{{ \Config::get('app.name'); }}</h2>
+                        <h2 class="py-3">{{ \Config::get('app.name') }}</h2>
                         <br>
                         <p>
-                            ۲۸ مهر لغایت ۲ آبان ۱۴۰۰              
+                            ۲۸ مهر لغایت ۲ آبان ۱۴۰۰
                         </p>
-<br>
-<p> 
-    
-    تماس با ما: 0905743416
-<p>
+                        <br>
+                        <p>
+                            تماس با ما: <strong dir="ltr"> 0905 743 4161</strong>
+                        <p>
                     </div>
                 </div>
             </div>
@@ -157,7 +156,7 @@
                                 <label for="name">تعداد ناهار رزرو شده (هر پرس: {{ $food->amount }} تومان): </label>
                             </div>
                             <div class="form-group col-md-6 text-center">
-                                <p>{{ $newPay->launchs }} {{$food->unit}}</p>
+                                <p>{{ $newPay->launchs }} {{ $food->unit }}</p>
                                 <p style="color: green">مجموعا: {{ $col->get('launch_price') }} تومان</p>
                             </div>
                         </div>
@@ -167,7 +166,7 @@
                                 <label for="name">تعداد شام رزرو شده (هر پرس: {{ $food->amount }} تومان): </label>
                             </div>
                             <div class="form-group col-md-6 text-center">
-                                <p>{{ $newPay->dinners }} {{$food->unit}}</p>
+                                <p>{{ $newPay->dinners }} {{ $food->unit }}</p>
                                 <p style="color: green">مجموعا: {{ $col->get('dinner_price') }} تومان</p>
                             </div>
                         </div>
@@ -207,11 +206,16 @@
                         </div>
                     </form>
             </div>
-
         </div>
     </div>
+
     <div class="clear"></div>
     <br><br><br><br><br><br><br><br>
+
+    <div>
+        <script src="https://static.idpay.ir/trust.js?id=87512173&width=64" style="position: fixed; bottom: 0px; right: 0px;"></script>
+    </div>
+    
     <footer class="bg-light text-center text-lg-start" id="footer">
         <!-- Copyright -->
         <div class="text-center p-3">

@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ \Config::get('app.name'); }}</title>
+    <title>{{ \Config::get('app.name') }}</title>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vazir-font/30.1.0/font-face.css"
@@ -66,6 +66,7 @@
         .clear {
             clear: both;
         }
+
     </style>
 </head>
 
@@ -88,16 +89,15 @@
                     <div class="card-body">
                         <img src="https://yazd.ac.ir/UI/Styles/Default/images/logo.png" style="width:90%">
                         <br>
-                        <h2 class="py-3">{{ \Config::get('app.name'); }}</h2>
+                        <h2 class="py-3">{{ \Config::get('app.name') }}</h2>
                         <br>
                         <p>
                             ۲۸ مهر لغایت ۲ آبان ۱۴۰۰
-			</p>
-<br>
-<p> 
-    
-    تماس با ما: 0905743416
-<p>
+                        </p>
+                        <br>
+                        <p>
+                            تماس با ما: <strong dir="ltr"> 0905 743 4161</strong>
+                        <p>
                     </div>
                 </div>
             </div>
@@ -199,7 +199,7 @@
                     </div>
 
                     <div class="form-row">
-                        
+
                         <div class="form-group col-md-8 text-right" dir="rtl">
                             <label for="regcode" class="text-right">کد ثبت‌نام:</label>
                             <p style="color: red">توجه: درصورتیکه کد ثبت‌نام را ندارید، سیستم به شما خطا خواهد داد. </p>
@@ -222,6 +222,11 @@
         <div class="clear"></div>
         <br><br><br><br><br><br><br><br>
     </div>
+
+    <div>
+        <script src="https://static.idpay.ir/trust.js?id=87512173&width=64" style="position: fixed; bottom: 0px; right: 0px;"></script>
+    </div>
+
     <footer class="bg-light text-center text-lg-start" id="footer">
         <!-- Copyright -->
         <div class="text-center p-3">
