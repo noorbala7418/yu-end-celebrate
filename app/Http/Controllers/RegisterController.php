@@ -132,7 +132,7 @@ class RegisterController extends Controller
     $request = Toman::orderId($payment->order_id)
       ->amount($payment->bill)
       ->description(Config::get('app.name'))
-      ->name($payment->name . $payment->family)
+      ->name($payment->name . ' - ' . $payment->family)
       ->callback(route('confirm'))
       ->mobile($payment->mobile)
       ->request();
@@ -182,8 +182,6 @@ class RegisterController extends Controller
       $anjoman->update([
         'used_people' => $anjoman->used_people + $confirmPayment->hamrahan + 1
       ]);
-
-      // TODO: create student from pay object
 
       $this->createStudent($confirmPayment);
       return view('success-payment', compact(['referenceId']));
