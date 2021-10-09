@@ -35,7 +35,7 @@ Route::get('/confirm', [
     'confirmPayment'
 ])->name('confirm');
 
-Route::get('/report/{name}',[ // TODO: This is a messy! and to be clean in next version
+Route::get('/report/{name}',[ // TODO: This is a too messy! and to be clean in next version
     RegisterController::class,
     'getReport'
 ]);
