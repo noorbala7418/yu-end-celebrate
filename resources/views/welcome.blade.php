@@ -91,7 +91,13 @@
                         <h2 class="py-3">{{ \Config::get('app.name'); }}</h2>
                         <br>
                         <p>
-                            بیتوک | انجمن علمی مهندسی کامپیوتر</p>
+                            ۲۸ مهر لغایت ۲ آبان ۱۴۰۰
+			</p>
+<br>
+<p> 
+    
+    تماس با ما: 0905743416
+<p>
                     </div>
                 </div>
             </div>
@@ -125,7 +131,7 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-3" dir="rtl" style="text-align: right; padding-top:6px">
-                            <label for="anjoman"> انجمن علمی: </label>
+                            <label for="anjoman"> رشته تحصیلی: </label>
                         </div>
                         <div class="form-group col-md-9">
                             <select name="anjoman" class="form-control" required>
@@ -140,7 +146,7 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
-                            <label for="anjoman">تعداد همراهان (توجه: حداکثر تعداد همراهان ۱۴ نفر می‌باشد.)</label>
+                            <label for="anjoman">تعداد همراهان: </label>
                         </div>
                         <div class="form-group col-md-4" dir="ltr">
                             <input id="hamrahan" name="hamrahan" placeholder="تعداد همراهان" class="form-control"
@@ -163,7 +169,7 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
-                            <label for="launch">تعداد ناهار (توجه: حداکثر تعداد 15 پرس می‌باشد.)</label>
+                            <label for="launch">تعداد ناهار: </label>
                         </div>
                         <div class="form-group col-md-4" dir="ltr">
                             <input id="launch" name="launch" class="form-control" placeholder="تعداد ناهار رزرو"
@@ -173,7 +179,7 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
-                            <label for="dinner">تعداد شام (توجه: حداکثر تعداد 15 پرس می‌باشد.)</label>
+                            <label for="dinner">تعداد شام: </label>
                         </div>
                         <div class="form-group col-md-4" dir="ltr">
                             <input id="dinner" name="dinner" class="form-control" placeholder="تعداد شام رزرو"
@@ -181,7 +187,7 @@
                         </div>
                     </div>
 
-                    {{-- <div class="form-row">
+                    <div class="form-row">
                         <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
                             @foreach ($tandis as $item)
                                 <label for="anjoman">تندیس می‌خواهم (قیمت: {{ $item->amount }} تومان)</label>
@@ -190,7 +196,7 @@
                         <div class="form-group col-md-4" dir="ltr">
                             <input id="tandis" name="tandis" class="form-control" type="checkbox">
                         </div>
-                    </div> --}}
+                    </div>
 
                     <div class="form-row">
                         
