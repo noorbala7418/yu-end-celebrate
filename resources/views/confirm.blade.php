@@ -77,7 +77,9 @@
             <div class="col-md-4 py-5 bg-primary text-white text-center ">
                 <div class=" ">
                     <div class="card-body">
-                        <img src="https://yazd.ac.ir/UI/Styles/Default/images/logo.png" style="width:90%">
+                        <a href="{{ route('home') }}">
+                            <img src="https://yazd.ac.ir/UI/Styles/Default/images/logo.png" style="width:90%">
+                        </a>
                         <br>
                         <h2 class="py-3">{{ \Config::get('app.name') }}</h2>
                         <br>
@@ -213,9 +215,10 @@
     <br><br><br><br><br><br><br><br>
 
     <div>
-        <script src="https://static.idpay.ir/trust.js?id=87512173&width=64" style="position: fixed; bottom: 0px; right: 0px;"></script>
+        <script src="https://static.idpay.ir/trust.js?id=87512173&width=64" style="position: fixed; bottom: 0px; right: 0px;">
+        </script>
     </div>
-    
+
     <footer class="bg-light text-center text-lg-start" id="footer">
         <!-- Copyright -->
         <div class="text-center p-3">

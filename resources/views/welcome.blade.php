@@ -87,7 +87,9 @@
             <div class="col-md-4 py-5 bg-primary text-white text-center ">
                 <div class=" ">
                     <div class="card-body">
-                        <img src="https://yazd.ac.ir/UI/Styles/Default/images/logo.png" style="width:90%">
+                        <a href="{{ route('home') }}">
+                            <img src="https://yazd.ac.ir/UI/Styles/Default/images/logo.png" style="width:90%">
+                        </a>
                         <br>
                         <h2 class="py-3">{{ \Config::get('app.name') }}</h2>
                         <br>
