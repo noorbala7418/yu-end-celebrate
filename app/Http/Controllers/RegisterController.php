@@ -20,9 +20,11 @@ class RegisterController extends Controller
   public function index()
   {
     $anjomans = Anjoman::query()->get();
-    $foods = Fee::query()->where('type', '=', Fee::TYPE_FOOD)->get();
-    $tandis = Fee::query()->where('type', '=', Fee::TYPE_GIFT)->where('product', '=', 'تندیس')->get();
-    return view('welcome', compact(['anjomans', 'foods', 'tandis']));
+    // $foods = Fee::query()->where('type', '=', Fee::TYPE_FOOD)->get();
+    // $tandis = Fee::query()->where('type', '=', Fee::TYPE_GIFT)->where('product', '=', 'تندیس')->get();
+    
+    // return view('welcome', compact(['anjomans', 'foods', 'tandis']));
+    return view('welcome', compact(['anjomans']));
   }
 
   public function prepareData(Request $data)

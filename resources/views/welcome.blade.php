@@ -189,9 +189,7 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
-                            @foreach ($tandis as $item)
-                                <label for="anjoman">تندیس می‌خواهم (قیمت: {{ $item->amount }} تومان)</label>
-                            @endforeach
+                            <label for="anjoman">تندیس می‌خواهم</label>
                         </div>
                         <div class="form-group col-md-4" dir="ltr">
                             <input id="tandis" name="tandis" class="form-control" type="checkbox">
@@ -224,7 +222,8 @@
     </div>
 
     <div>
-        <script src="https://static.idpay.ir/trust.js?id=87512173&width=64" style="position: fixed; bottom: 0px; right: 0px;"></script>
+        <script src="https://static.idpay.ir/trust.js?id=87512173&width=64" style="position: fixed; bottom: 0px; right: 0px;">
+        </script>
     </div>
 
     <footer class="bg-light text-center text-lg-start" id="footer">
