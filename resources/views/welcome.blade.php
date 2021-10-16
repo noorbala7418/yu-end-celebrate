@@ -99,7 +99,14 @@
                         <br>
                         <p>
                             تماس با ما: <strong dir="ltr"> 0905 743 4161</strong>
-                        <p>
+                        </p>
+                        <br>
+                        <a href="{{ route('hamrah-home') }}" id="hamrah-page" class="btn"
+                            style="margin: auto auto; background-color: #fff">
+                            <p style="color: #000">
+                                ثبت‌نام همراه در جشن
+                            </p>
+                        </a>
                     </div>
                 </div>
             </div>
