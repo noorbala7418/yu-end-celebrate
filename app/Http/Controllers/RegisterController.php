@@ -22,7 +22,7 @@ class RegisterController extends Controller
     $anjomans = Anjoman::query()->get();
     // $foods = Fee::query()->where('type', '=', Fee::TYPE_FOOD)->get();
     // $tandis = Fee::query()->where('type', '=', Fee::TYPE_GIFT)->where('product', '=', 'تندیس')->get();
-    
+
     // return view('welcome', compact(['anjomans', 'foods', 'tandis']));
     return view('welcome', compact(['anjomans']));
   }
@@ -84,9 +84,9 @@ class RegisterController extends Controller
 
     $col = collect([
       'person_price' => (int)$anjoman->person_price,
-      'hamrah_price' => $hamrahanFee * $request->hamrahan, // mohasebe nerkh hamrahan
-      'launch_price' => (int)$food->amount * $request->launch, // mohasebe food
-      'dinner_price' => (int)$food->amount * $request->dinner // mohasebe food
+      'hamrah_price' => $hamrahanFee * (int)$this->convert2english($request->hamrahan), // mohasebe nerkh hamrahan
+      'launch_price' => (int)$food->amount * (int)$this->convert2english($request->launch), // mohasebe food
+      'dinner_price' => (int)$food->amount * (int)$this->convert2english($request->dinner) // mohasebe food
     ]);
 
     if ($request->exists('tandis')) {
@@ -96,21 +96,17 @@ class RegisterController extends Controller
     $bill = $col->sum();
     $col->put('bill', $bill);
 
-    $orderID = random_int(100, 100000);
-
     $newPay = Payment::create([
       'name' => $request->name,
       'family' => $request->family,
-      'stdID' => $request->stdID,
-      'mobile' => $request->mobile,
-      'email' => $request->email,
-      'order_id' => $orderID,
+      'stdID' => (int)$this->convert2english($request->stdID),
+      'mobile' => (int)$this->convert2english($request->mobile),
       'bill' => $col->get('bill'),
       'anjoman_id' => (int)$request->anjoman,
-      'hamrahan' => $request->hamrahan,
+      'hamrahan' => (int)$this->convert2english($request->hamrahan),
       'tandis' => $request->exists('tandis'),
-      'launchs' => $request->launch,
-      'dinners' => $request->dinner
+      'launchs' => (int)$this->convert2english($request->launch),
+      'dinners' => (int)$this->convert2english($request->dinner)
     ]);
 
 
@@ -124,8 +120,8 @@ class RegisterController extends Controller
   public function payment($id)
   {
     $payment = Payment::query()->findOrFail($id);
-
     $payment->update([
+      'order_id' => $id + 100000,
       'person_confirmed' => true
     ]);
 
@@ -135,7 +131,7 @@ class RegisterController extends Controller
       ->amount($payment->bill)
       ->description(Config::get('app.name'))
       ->name($payment->name . ' - ' . $payment->family)
-      ->callback(route('confirm'))
+      ->callback(route('main-confirm'))
       ->mobile($payment->mobile)
       ->request();
 
@@ -218,12 +214,29 @@ class RegisterController extends Controller
     ]);
   }
 
-
   public function getReport($name)
   {
     if ($name == "YazdUniGetReport1400") { // TODO: This is a messy! Should be clean in next version
       return Excel::download(new StudentsExport, 'stds.xlsx');
     }
     return redirect('/');
+  }
+
+  function convert2english($string)
+  {
+    $newNumbers = range(0, 9);
+    // 1. Persian HTML decimal
+    $persianDecimal = array('&#1776;', '&#1777;', '&#1778;', '&#1779;', '&#1780;', '&#1781;', '&#1782;', '&#1783;', '&#1784;', '&#1785;');
+    // 2. Arabic HTML decimal
+    $arabicDecimal = array('&#1632;', '&#1633;', '&#1634;', '&#1635;', '&#1636;', '&#1637;', '&#1638;', '&#1639;', '&#1640;', '&#1641;');
+    // 3. Arabic Numeric
+    $arabic = array('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩');
+    // 4. Persian Numeric
+    $persian = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹');
+
+    $string =  str_replace($persianDecimal, $newNumbers, $string);
+    $string =  str_replace($arabicDecimal, $newNumbers, $string);
+    $string =  str_replace($arabic, $newNumbers, $string);
+    return str_replace($persian, $newNumbers, $string);
   }
 }
