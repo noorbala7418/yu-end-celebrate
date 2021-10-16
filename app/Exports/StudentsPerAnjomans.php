@@ -4,13 +4,10 @@ namespace App\Exports;
 
 use App\Models\Anjoman;
 use App\Models\Student;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
-//class StudentsPerAnjomans implements FromQuery, WithTitle
+
 class StudentsPerAnjomans implements FromCollection, WithTitle, WithHeadings
 {
     private $anjomanId;
