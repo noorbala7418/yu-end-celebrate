@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HamrahRegisterController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,14 +30,41 @@ Route::post('/pay/{id}',[
     'payment'
 ])->name('pay');
 
-
 Route::get('/confirm', [
     RegisterController::class,
     'confirmPayment'
-])->name('confirm');
+])->name('main-confirm');
 
-Route::get('/report/{name}',[ // TODO: This is a too messy! and to be clean in next version
+# =================== Hamrah Registration ==================
+
+Route::get('/hamrah', [
+    HamrahRegisterController::class,
+    'index'
+])->name('hamrah-home');
+
+Route::post('/hamrah', [
+    HamrahRegisterController::class,
+    'prepareData'
+])->name('hamrah-register');
+
+Route::get('/hamrah/confirm', [
+    HamrahRegisterController::class,
+    'confirmPayment'
+])->name('hamrah-confirm');
+
+Route::post('/hamrah/pay/{id}',[
+    HamrahRegisterController::class,
+    'payment'
+])->name('hamrah-pay');
+
+# =================== Get Report ========================
+
+Route::get('/report/students/{name}',[ // TODO: This is a too messy! and to be clean in next version
     RegisterController::class,
     'getReport'
 ]);
 
+Route::get('/report/hamrahan/{name}',[ // TODO: This is a too messy! and to be clean in next version
+    HamrahRegisterController::class,
+    'getReport'
+]);
