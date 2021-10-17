@@ -44,7 +44,7 @@
 
             </div>
         </div>
-        <div class="form-row">
+        {{-- <div class="form-row">
             <div class="form-group col-md-8" dir="rtl" style="text-align: right; padding-top:6px">
                 <label for="anjoman">تعداد همراهان: </label>
             </div>
@@ -53,7 +53,7 @@
                     required type="number" max="14" min="0" value="0">
 
             </div>
-        </div>
+        </div> --}}
 
         {{-- <div class="form-row">
             <div class="form-group col-md-12" dir="rtl" style="text-align: right;">

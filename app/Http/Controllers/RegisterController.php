@@ -42,7 +42,7 @@ class RegisterController extends Controller
       'mobile' => 'required|string|min:10|max:11',
       'stdID' => 'required|unique:students,stdID|digits_between:7,8',
       'anjoman' => 'required|exists:anjomans,id',
-      'hamrahan' => 'required|digits_between:0,14',
+      //'hamrahan' => 'required|digits_between:0,14',
       'launch' => 'required|digits_between:0,15',
       'dinner' => 'required|digits_between:0,15'
     ]);
@@ -54,11 +54,11 @@ class RegisterController extends Controller
       return back()->withErrors(['msg' => 'ظرفیت این رشته تکمیل شده است. لطفا دوباره تلاش نکنید.']);
     }
 
-    if ($data->hamrahan + 1 > $freePlace) {
-      return back()->withErrors([
-        'msg' => "تعداد رزرو مورد نظر شما از مقدار باقی مانده بیشتر است. تعداد باقی مانده: ${freePlace}"
-      ]);
-    }
+    // if ($data->hamrahan + 1 > $freePlace) {
+    //   return back()->withErrors([
+    //     'msg' => "تعداد رزرو مورد نظر شما از مقدار باقی مانده بیشتر است. تعداد باقی مانده: ${freePlace}"
+    //   ]);
+    // }
 
     return $this->calculateBill($data);
   }
@@ -76,7 +76,7 @@ class RegisterController extends Controller
           return $value;
         });
     }
-    $hamrahanFee = (int)($anjoman->hamrahan_price);
+    // $hamrahanFee = (int)($anjoman->hamrahan_price);
     $food = Fee::query()
       ->where('type', '=', Fee::TYPE_FOOD)
       ->get()
@@ -84,7 +84,7 @@ class RegisterController extends Controller
 
     $col = collect([
       'person_price' => (int)$anjoman->person_price,
-      'hamrah_price' => $hamrahanFee * (int)$this->convert2english($request->hamrahan), // mohasebe nerkh hamrahan
+      // 'hamrah_price' => $hamrahanFee * (int)$this->convert2english($request->hamrahan), // mohasebe nerkh hamrahan
       'launch_price' => (int)$food->amount * (int)$this->convert2english($request->launch), // mohasebe food
       'dinner_price' => (int)$food->amount * (int)$this->convert2english($request->dinner) // mohasebe food
     ]);
@@ -103,7 +103,8 @@ class RegisterController extends Controller
       'mobile' => (int)$this->convert2english($request->mobile),
       'bill' => $col->get('bill'),
       'anjoman_id' => (int)$request->anjoman,
-      'hamrahan' => (int)$this->convert2english($request->hamrahan),
+      'hamrahan' => 0,
+      // 'hamrahan' => (int)$this->convert2english($request->hamrahan),
       'tandis' => $request->exists('tandis'),
       'launchs' => (int)$this->convert2english($request->launch),
       'dinners' => (int)$this->convert2english($request->dinner)
@@ -178,7 +179,8 @@ class RegisterController extends Controller
 
       $anjoman = Anjoman::query()->findOrFail($confirmPayment->anjoman_id);
       $anjoman->update([
-        'used_people' => $anjoman->used_people + $confirmPayment->hamrahan + 1
+        'used_people' => $anjoman->used_people + 1
+        // 'used_people' => $anjoman->used_people + $confirmPayment->hamrahan + 1
       ]);
 
       $this->createStudent($confirmPayment);

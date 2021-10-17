@@ -50,7 +50,7 @@
             </div>
 
 
-            <div class="form-row">
+            {{-- <div class="form-row">
                 <div class="form-group col-md-6 text-right">
                     <label for="name">تعداد همراهان (هرنفر: {{ $anjoman->hamrahan_price }} تومان):
                     </label>
@@ -59,7 +59,7 @@
                     <p>{{ $newPay->hamrahan }} نفر</p>
                     <p style="color: green">مجموعا: {{ $col->get('hamrah_price') }} تومان</p>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="form-row">
                 <div class="form-group col-md-6 text-right">
