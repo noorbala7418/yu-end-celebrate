@@ -1,0 +1,6 @@
+*
+dumps/*
+
+!dumps/
+!my.cnf.example
+!.gitignore

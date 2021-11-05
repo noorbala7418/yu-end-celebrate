@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+    db:
+        image: mysql:5.7.35
+        volumes:
+            - "./docker-compose/db/data:/var/lib/mysql"
+            - "./docker-compose/db/dumps:/docker-entrypoint-initdb.d"
+            - "./docker-compose/db/my.cnf:/etc/mysql/my.cnf"
+        networks:
+            - celebrate
+        environment:
+            MYSQL_ROOT_PASSWORD: 'YOUR_ROOT_PASSWORD'
+            MYSQL_DATABASE: 'yu-end-celebrate'
+            MYSQL_USER: 'app-yu'
+            MYSQL_PASSWORD: 'root'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping"]
+        restart: always
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+        
+    nginx:
+        image: nginx:1.21.1-alpine
+        volumes:
+            - "./docker-compose/nginx/certs:/etc/nginx/certs"
+            - "./docker-compose/nginx/config:/etc/nginx/conf.d"
+            - "./docker-compose/nginx/logs:/var/log/nginx"
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - celebrate
+        restart: always
+        depends_on:
+            - db
+            - app
+        
+    app:
+        build:
+            context: ./source
+            dockerfile: Dockerfile
+        image: yu-end-celebrate:1.0
+        restart: always
+        volumes:
+            - './source:/var/www'
+        networks:
+            - celebrate
+        depends_on:
+            - db
+
+    phpmyadmin:
+        image: dockerhub.ir/phpmyadmin/phpmyadmin:5
+        ports:
+            - "127.0.0.1:8080:80"
+        environment:
+            PMA_HOST: db
+        environment:
+            - PMA_ARBITRARY=1
+        networks:
+            - celebrate
+        links:
+            - db:db
+
+networks:
+    celebrate:
+        driver: bridge
